@@ -65,88 +65,123 @@ new class extends Component
         );
     }
 
-    public function guardar(): void
-    {
-        $this->validate([
-            'nombres' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'dni' => 'required|digits:8',
-            'telefono' => 'nullable|digits:9',
-            'email' => 'nullable|email|max:255',
-            'puesto' => 'required|string|max:150',
-            'fecha_postulacion' => 'required|date',
-            'estado' => 'required|in:Postulando,Entrevista,Seleccionado,Rechazado',
-        ], [
-            'nombres.required' => 'Los nombres son obligatorios.',
-            'apellidos.required' => 'Los apellidos son obligatorios.',
-            'dni.required' => 'El DNI es obligatorio.',
-            'dni.digits' => 'El DNI debe tener 8 dígitos.',
-            'telefono.digits' => 'El teléfono debe tener 9 dígitos.',
-            'email.email' => 'Ingresa un correo válido.',
-            'puesto.required' => 'El puesto es obligatorio.',
-            'fecha_postulacion.required' =>
-                'La fecha de postulación es obligatoria.',
-            'fecha_postulacion.date' =>
-                'Ingresa una fecha válida.',
-            'estado.required' => 'El estado es obligatorio.',
-        ]);
+   public function guardar(): void
+{
+    $this->validate([
+        'nombres' => 'required|string|max:100',
+        'apellidos' => 'required|string|max:100',
+        'dni' => 'required|digits:8',
+        'telefono' => 'nullable|digits:9',
+        'email' => 'nullable|email|max:255',
+        'puesto' => 'required|string|max:150',
+        'fecha_postulacion' => 'required|date',
+        'estado' => 'required|in:Postulando,Entrevista,Seleccionado,Rechazado',
+    ], [
+        'nombres.required' => 'Los nombres son obligatorios.',
+        'apellidos.required' => 'Los apellidos son obligatorios.',
+        'dni.required' => 'El DNI es obligatorio.',
+        'dni.digits' => 'El DNI debe tener 8 dígitos.',
+        'telefono.digits' => 'El teléfono debe tener 9 dígitos.',
+        'email.email' => 'Ingresa un correo válido.',
+        'puesto.required' => 'El puesto es obligatorio.',
+        'fecha_postulacion.required' => 'La fecha de postulación es obligatoria.',
+        'fecha_postulacion.date' => 'Ingresa una fecha válida.',
+        'estado.required' => 'El estado es obligatorio.',
+    ]);
 
-        if ($this->postulanteEditando) {
+    // Validar el flujo del proceso de selección
+    if ($this->postulanteEditando) {
+        $postulanteActual = Postulante::find($this->postulanteEditando);
 
-            $postulante = Postulante::findOrFail(
-                $this->postulanteEditando
-            );
+        if ($postulanteActual) {
+            $estadoAnterior = $postulanteActual->estado;
+            $estadoNuevo = $this->estado;
 
-            $postulante->update([
-                'nombres' => $this->nombres,
-                'apellidos' => $this->apellidos,
-                'dni' => $this->dni,
-                'telefono' => $this->telefono ?: null,
-                'email' => $this->email ?: null,
-                'puesto' => $this->puesto,
-                'fecha_postulacion' => $this->fecha_postulacion,
-                'estado' => $this->estado,
-            ]);
+            $transicionesPermitidas = [
+                'Postulando' => ['Postulando', 'Entrevista', 'Rechazado'],
+                'Entrevista' => ['Entrevista', 'Seleccionado', 'Rechazado'],
+                'Seleccionado' => ['Seleccionado'],
+                'Rechazado' => ['Rechazado', 'Postulando'],
+            ];
 
-            $mensaje = 'Postulante actualizado correctamente.';
+            if (
+                !in_array(
+                    $estadoNuevo,
+                    $transicionesPermitidas[$estadoAnterior] ?? []
+                )
+            ) {
+                $this->addError(
+                    'estado',
+                    'El cambio de estado no corresponde al flujo del proceso de selección.'
+                );
 
-        } else {
-
-            Postulante::create([
-                'nombres' => $this->nombres,
-                'apellidos' => $this->apellidos,
-                'dni' => $this->dni,
-                'telefono' => $this->telefono ?: null,
-                'email' => $this->email ?: null,
-                'puesto' => $this->puesto,
-                'fecha_postulacion' => $this->fecha_postulacion,
-                'estado' => 'Postulando',
-            ]);
-
-            $mensaje = 'Postulante registrado correctamente.';
+                return;
+            }
         }
-
-        $this->mostrarFormulario = false;
-        $this->postulanteEditando = null;
-
-        $this->reset([
-            'nombres',
-            'apellidos',
-            'dni',
-            'telefono',
-            'email',
-            'puesto',
-            'fecha_postulacion',
-        ]);
-
-        $this->estado = 'Postulando';
-
-        session()->flash('mensaje', $mensaje);
     }
 
-    public function render()
-    {
-        $postulantes = Postulante::query()
+    if ($this->postulanteEditando) {
+        $postulante = Postulante::findOrFail(
+            $this->postulanteEditando
+        );
+
+        $postulante->update([
+            'nombres' => $this->nombres,
+            'apellidos' => $this->apellidos,
+            'dni' => $this->dni,
+            'telefono' => $this->telefono ?: null,
+            'email' => $this->email ?: null,
+            'puesto' => $this->puesto,
+            'fecha_postulacion' => $this->fecha_postulacion,
+            'estado' => $this->estado,
+        ]);
+
+        $mensaje = 'Postulante actualizado correctamente.';
+    } else {
+        Postulante::create([
+            'nombres' => $this->nombres,
+            'apellidos' => $this->apellidos,
+            'dni' => $this->dni,
+            'telefono' => $this->telefono ?: null,
+            'email' => $this->email ?: null,
+            'puesto' => $this->puesto,
+            'fecha_postulacion' => $this->fecha_postulacion,
+            'estado' => 'Postulando',
+        ]);
+
+        $mensaje = 'Postulante registrado correctamente.';
+    }
+
+    $this->mostrarFormulario = false;
+    $this->postulanteEditando = null;
+
+    $this->reset([
+        'nombres',
+        'apellidos',
+        'dni',
+        'telefono',
+        'email',
+        'puesto',
+        'fecha_postulacion',
+    ]);
+
+    $this->estado = 'Postulando';
+
+    session()->flash('mensaje', $mensaje);
+}
+public function render()
+{
+    $totalPostulantes = Postulante::count();
+
+    $totalPostulando = Postulante::where('estado', 'Postulando')->count();
+
+    $totalEntrevista = Postulante::where('estado', 'Entrevista')->count();
+
+    $totalSeleccionados = Postulante::where('estado', 'Seleccionado')->count();
+
+    $totalRechazados = Postulante::where('estado', 'Rechazado')->count();
+
+    $postulantes = Postulante::query()
             ->when($this->buscar, function ($query) {
                 $query->where(function ($query) {
                     $query->where(
@@ -181,8 +216,13 @@ new class extends Component
             ->paginate(10);
 
         return view('components.⚡reclutamiento', [
-            'postulantes' => $postulantes,
-        ]);
+    'postulantes' => $postulantes,
+    'totalPostulantes' => $totalPostulantes,
+    'totalPostulando' => $totalPostulando,
+    'totalEntrevista' => $totalEntrevista,
+    'totalSeleccionados' => $totalSeleccionados,
+    'totalRechazados' => $totalRechazados,
+]);
     }
 };
 ?>
@@ -407,7 +447,55 @@ new class extends Component
         </form>
 
     </div>
+{{-- INDICADORES DE RECLUTAMIENTO --}}
+<div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Total postulantes
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPostulantes }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Postulando
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPostulando }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            En entrevista
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalEntrevista }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Seleccionados
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalSeleccionados }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Rechazados
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalRechazados }}
+        </p>
+    </div>
+
+</div>
     {{-- TABLA --}}
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
 

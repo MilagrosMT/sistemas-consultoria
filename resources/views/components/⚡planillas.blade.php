@@ -75,7 +75,21 @@ public function guardar(): void
         'bonificaciones.numeric' => 'Ingresa un monto válido.',
         'descuentos.numeric' => 'Ingresa un monto válido.',
     ]);
+    $duplicado = Planilla::where('empleado_id', $this->empleado_id)
+        ->whereDate('periodo', $this->periodo)
+        ->when($this->planillaEditando, function ($query) {
+            $query->where('id', '!=', $this->planillaEditando);
+        })
+        ->exists();
 
+    if ($duplicado) {
+        $this->addError(
+            'periodo',
+            'Ya existe una planilla registrada para este empleado en el periodo seleccionado.'
+        );
+
+        return;
+    }
     $sueldoNeto =
         (float) $this->sueldo_base
         + (float) $this->bonificaciones
@@ -130,11 +144,25 @@ public function guardar(): void
 }  
   public function with(): array
     {
+$totalPlanillas = Planilla::count();
+
+$totalPendientes = Planilla::where('estado', 'Pendiente')->count();
+
+$totalPagadas = Planilla::where('estado', 'Pagada')->count();
+
+$totalAnuladas = Planilla::where('estado', 'Anulada')->count();
+
+$totalNeto = Planilla::where('estado', '!=', 'Anulada')
+    ->sum('sueldo_neto');
         return [
             'empleados' => Empleado::orderBy('apellidos')
                 ->orderBy('nombres')
                 ->get(),
-
+'totalPlanillas' => $totalPlanillas,
+'totalPendientes' => $totalPendientes,
+'totalPagadas' => $totalPagadas,
+'totalAnuladas' => $totalAnuladas,
+'totalNeto' => $totalNeto,
             'planillas' => Planilla::with('empleado')
     ->when($this->buscar, function ($query) {
         $query->whereHas('empleado', function ($query) {
@@ -360,7 +388,55 @@ public function guardar(): void
         </form>
 
     </div>
+{{-- INDICADORES DE PLANILLAS --}}
+<div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Total de planillas
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPlanillas }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Pendientes
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPendientes }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Pagadas
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPagadas }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Anuladas
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalAnuladas }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Neto registrado
+        </p>
+        <p class="mt-2 text-2xl font-bold text-gray-900">
+            S/ {{ number_format($totalNeto, 2) }}
+        </p>
+    </div>
+
+</div>
     {{-- TABLA --}}
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
 

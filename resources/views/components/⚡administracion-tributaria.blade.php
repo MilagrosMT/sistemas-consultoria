@@ -150,9 +150,20 @@ new class extends Component
         session()->flash('mensaje', $mensaje);
     }
 
-    public function render()
-    {
-        $obligaciones = ObligacionTributaria::query()
+public function render()
+{
+    $hoy = now()->startOfDay();
+    $limite = now()->addDays(7)->endOfDay();
+
+    // Actualiza automáticamente las obligaciones pendientes
+    // cuya fecha de vencimiento ya pasó.
+    ObligacionTributaria::where('estado', 'Pendiente')
+        ->whereDate('fecha_vencimiento', '<', $hoy->toDateString())
+        ->update([
+            'estado' => 'Vencida',
+        ]);
+
+    $obligaciones = ObligacionTributaria::query()
             ->when($this->buscar, function ($query) {
                 $query->where(function ($query) {
                     $query->where(
@@ -179,11 +190,32 @@ new class extends Component
                 );
             })
             ->latest()
-            ->paginate(10);
+->paginate(10);
 
-        return view('components.⚡administracion-tributaria', [
-            'obligaciones' => $obligaciones,
-        ]);
+$totalObligaciones = ObligacionTributaria::count();
+
+$totalPendientes = ObligacionTributaria::where('estado', 'Pendiente')
+    ->count();
+
+$totalVencidas = ObligacionTributaria::where('estado', 'Vencida')
+    ->count();
+
+$totalPagadas = ObligacionTributaria::where('estado', 'Pagada')
+    ->count();
+
+$totalProximasVencer = ObligacionTributaria::where('estado', 'Pendiente')
+    ->whereDate('fecha_vencimiento', '>=', $hoy->toDateString())
+    ->whereDate('fecha_vencimiento', '<=', $limite->toDateString())
+    ->count();
+
+return view('components.⚡administracion-tributaria', [
+    'obligaciones' => $obligaciones,
+    'totalObligaciones' => $totalObligaciones,
+    'totalPendientes' => $totalPendientes,
+    'totalVencidas' => $totalVencidas,
+    'totalPagadas' => $totalPagadas,
+    'totalProximasVencer' => $totalProximasVencer,
+]);
     }
 };
 ?>
@@ -413,7 +445,49 @@ new class extends Component
         </form>
 
     </div>
+{{-- INDICADORES --}}
+<div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Total de obligaciones
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalObligaciones }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Pendientes
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalPendientes }}
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Próximas a vencer
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalProximasVencer }}
+        </p>
+        <p class="mt-1 text-xs text-gray-500">
+            Próximos 7 días
+        </p>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-medium text-gray-500">
+            Vencidas
+        </p>
+        <p class="mt-2 text-3xl font-bold text-gray-900">
+            {{ $totalVencidas }}
+        </p>
+    </div>
+
+</div>
     {{-- TABLA --}}
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
 
