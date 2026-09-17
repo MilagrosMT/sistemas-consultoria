@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
@@ -42,136 +41,257 @@
              ===================================================== --}}
         <flux:sidebar.nav>
 
-
-            {{-- =================================================
-                 INICIO
-                 ================================================= --}}
-            <flux:sidebar.group
-                heading="Inicio"
-                class="grid"
-            >
-
-                <flux:sidebar.item
-                    icon="home"
-                    :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')"
-                    wire:navigate
-                >
-                    Dashboard
-                </flux:sidebar.item>
-
-            </flux:sidebar.group>
+    {{-- INICIO --}}
+    <flux:sidebar.group heading="Inicio" class="grid">
+        <flux:sidebar.item
+            icon="home"
+            :href="route('dashboard')"
+            :current="request()->routeIs('dashboard')"
+            wire:navigate
+        >
+            Dashboard
+        </flux:sidebar.item>
+    </flux:sidebar.group>
 
 
-            {{-- =================================================
-                 GESTIÓN DEL PERSONAL
-                 ================================================= --}}
-            <flux:sidebar.group
-                heading="Gestión del personal"
-                class="grid"
-            >
+    {{-- GESTIÓN COMERCIAL --}}
+    <flux:sidebar.group heading="Gestión Comercial" class="grid">
 
-                {{-- Empleados --}}
-                <flux:sidebar.item
-                    icon="users"
-                    :href="route('empleados')"
-                    :current="request()->routeIs('empleados')"
-                    wire:navigate
-                >
-                    Empleados
-                </flux:sidebar.item>
+        <flux:sidebar.item
+            icon="megaphone"
+            :href="route('marketing')"
+            :current="request()->routeIs('marketing')"
+            wire:navigate
+        >
+            Marketing
+        </flux:sidebar.item>
 
+        <flux:sidebar.item
+            icon="building-office"
+            :href="route('clientes')"
+            :current="request()->routeIs('clientes')"
+            wire:navigate
+        >
+            Clientes
+        </flux:sidebar.item>
 
-                {{-- Reclutamiento
-                     Esta ruta la crearemos posteriormente.
-                     Por ahora NO colocar href para evitar errores.
-                --}}
-               <flux:sidebar.item
-    icon="user-plus"
-    :href="route('reclutamiento')"
-    :current="request()->routeIs('reclutamiento')"
-    wire:navigate
->
-    Reclutamiento
-</flux:sidebar.item>
+        <flux:sidebar.item
+            icon="briefcase"
+            :href="route('servicios')"
+            :current="request()->routeIs('servicios')"
+            wire:navigate
+        >
+            Servicios
+        </flux:sidebar.item>
 
+        <flux:sidebar.item
+            icon="document-text"
+            :href="route('contratos')"
+            :current="request()->routeIs('contratos')"
+            wire:navigate
+        >
+            Contratos
+        </flux:sidebar.item>
 
-                {{-- Planillas
-                     La ruta será creada posteriormente.
-                --}}
-               <flux:sidebar.item
-    icon="banknotes"
-    :href="route('planillas')"
-    :current="request()->routeIs('planillas')"
-    wire:navigate
->
-    Planillas
-</flux:sidebar.item>
+        <flux:sidebar.item
+            icon="receipt-percent"
+            :href="route('ventas')"
+            :current="request()->routeIs('ventas')"
+            wire:navigate
+        >
+            Ventas / Facturación
+        </flux:sidebar.item>
 
-            </flux:sidebar.group>
-
-
-            {{-- =================================================
-                 CONTABILIDAD Y TRIBUTACIÓN
-                 ================================================= --}}
-            <flux:sidebar.group
-                heading="Contabilidad y tributación"
-                class="grid"
-            >
-
-{{-- Administración tributaria --}}
-<flux:sidebar.item
-    icon="document-text"
-    :href="route('administracion-tributaria')"
-    :current="request()->routeIs('administracion-tributaria')"
-    wire:navigate
->
-    Administración tributaria
-</flux:sidebar.item>
+    </flux:sidebar.group>
 
 
-                {{-- Reportes --}}
-                <flux:sidebar.item
-                    icon="chart-bar"
-                >
-                    Reportes
-                </flux:sidebar.item>
+    {{-- GESTIÓN CONTABLE --}}
+    <flux:sidebar.group heading="Gestión Contable" class="grid">
 
-            </flux:sidebar.group>
+        <flux:sidebar.item
+            icon="shopping-cart"
+            :href="route('compras')"
+            :current="request()->routeIs('compras')"
+            wire:navigate
+        >
+            Compras de clientes
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="document-chart-bar"
+            :href="route('ventas-clientes')"
+            :current="request()->routeIs('ventas-clientes')"
+            wire:navigate
+        >
+            Ventas de clientes
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="banknotes"
+            :href="route('caja-clientes')"
+            :current="request()->routeIs('caja-clientes')"
+            wire:navigate
+        >
+            Caja de clientes
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="calculator"
+            :href="route('procesamiento-contable')"
+            :current="request()->routeIs('procesamiento-contable')"
+            wire:navigate
+        >
+            Procesamiento contable
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
 
 
-            {{-- =================================================
-                 ADMINISTRACIÓN DEL SISTEMA
-                 ================================================= --}}
-            <flux:sidebar.group
-                heading="Administración"
-                class="grid"
-            >
+    {{-- ADMINISTRACIÓN TRIBUTARIA --}}
+    <flux:sidebar.group heading="Administración Tributaria" class="grid">
 
-{{-- Usuarios --}}
-<flux:sidebar.item
-    icon="user-circle"
-    :href="route('usuarios')"
-    :current="request()->routeIs('usuarios')"
-    wire:navigate
->
-    Usuarios
-</flux:sidebar.item>
+        <flux:sidebar.item
+            icon="document-text"
+            :href="route('administracion-tributaria')"
+            :current="request()->routeIs('administracion-tributaria')"
+            wire:navigate
+        >
+            Obligaciones tributarias
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
 
 
-{{-- Roles y permisos --}}
-<flux:sidebar.item
-    icon="shield-check"
-    :href="route('roles')"
-    :current="request()->routeIs('roles')"
-    wire:navigate
->
-    Roles y permisos
-</flux:sidebar.item>
+    {{-- GESTIÓN DE PERSONAL --}}
+    <flux:sidebar.group heading="Gestión de Personal" class="grid">
 
-            </flux:sidebar.group>
+        <flux:sidebar.item
+            icon="users"
+            :href="route('empleados')"
+            :current="request()->routeIs('empleados')"
+            wire:navigate
+        >
+            Empleados
+        </flux:sidebar.item>
 
-        </flux:sidebar.nav>
+        <flux:sidebar.item
+            icon="banknotes"
+            :href="route('planillas')"
+            :current="request()->routeIs('planillas')"
+            wire:navigate
+        >
+            Planillas
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="user-plus"
+            :href="route('reclutamiento')"
+            :current="request()->routeIs('reclutamiento')"
+            wire:navigate
+        >
+            Reclutamiento
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+
+
+    {{-- OPERACIONES --}}
+    <flux:sidebar.group heading="Operaciones" class="grid">
+
+        <flux:sidebar.item
+            icon="clipboard-document-list"
+            :href="route('operaciones')"
+            :current="request()->routeIs('operaciones')"
+            wire:navigate
+        >
+            Servicios en proceso
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="arrow-path"
+            disabled
+        >
+            Seguimiento
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+
+
+    {{-- GESTIÓN DOCUMENTARIA --}}
+    <flux:sidebar.group heading="Gestión Documentaria" class="grid">
+
+        <flux:sidebar.item
+            icon="folder"
+            disabled
+        >
+            Documentos de clientes
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="document-duplicate"
+            disabled
+        >
+            Expedientes
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+
+
+    {{-- REPORTES Y GERENCIA --}}
+    <flux:sidebar.group heading="Reportes y Gerencia" class="grid">
+
+        <flux:sidebar.item
+            icon="chart-bar"
+            :href="route('reportes')"
+            :current="request()->routeIs('reportes')"
+            wire:navigate
+        >
+            Reportes
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="presentation-chart-line"
+            disabled
+        >
+            SLA / KPI
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+
+
+    {{-- ADMINISTRACIÓN DEL SISTEMA --}}
+    <flux:sidebar.group heading="Administración del Sistema" class="grid">
+
+        <flux:sidebar.item
+            icon="user-circle"
+            :href="route('usuarios')"
+            :current="request()->routeIs('usuarios')"
+            wire:navigate
+        >
+            Usuarios
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="shield-check"
+            :href="route('roles')"
+            :current="request()->routeIs('roles')"
+            wire:navigate
+        >
+            Roles y permisos
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="cog-6-tooth"
+            :href="route('configuracion')"
+            :current="request()->routeIs('configuracion')"
+            wire:navigate
+        >
+            Configuración
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+
+</flux:sidebar.nav>
 
 
         {{-- =====================================================
@@ -193,7 +313,7 @@
                 :current="request()->routeIs('profile.edit')"
                 wire:navigate
             >
-                Configuración
+                Mi Perfil
             </flux:sidebar.item>
 
         </flux:sidebar.nav>

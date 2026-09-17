@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Models\Empleado;
@@ -47,7 +48,9 @@ new class extends Component
 
         $this->estado = 'Activo';
         $this->empleadoEditando = null;
+
         $this->resetValidation();
+
         $this->mostrarFormulario = true;
     }
 
@@ -67,6 +70,7 @@ new class extends Component
 
         $this->estado = 'Activo';
         $this->empleadoEditando = null;
+
         $this->resetValidation();
     }
 
@@ -90,6 +94,7 @@ new class extends Component
         $this->estado = $empleado->estado;
 
         $this->resetValidation();
+
         $this->mostrarFormulario = true;
     }
 
@@ -119,12 +124,15 @@ new class extends Component
         ];
 
         if ($this->empleadoEditando === null) {
+
             $reglas['dni'] = 'required|string|size:8|unique:empleados,dni';
 
             $mensajes['dni.required'] = 'El DNI es obligatorio.';
             $mensajes['dni.size'] = 'El DNI debe tener exactamente 8 dígitos.';
             $mensajes['dni.unique'] = 'Este DNI ya está registrado.';
+
         } else {
+
             $reglas['dni'] =
                 'required|string|size:8|unique:empleados,dni,' .
                 $this->empleadoEditando;
@@ -137,6 +145,7 @@ new class extends Component
         $this->validate($reglas, $mensajes);
 
         if ($this->empleadoEditando === null) {
+
             Empleado::create([
                 'nombres' => $this->nombres,
                 'apellidos' => $this->apellidos,
@@ -149,7 +158,9 @@ new class extends Component
             ]);
 
             $mensaje = 'Empleado registrado correctamente.';
+
         } else {
+
             $empleado = Empleado::findOrFail($this->empleadoEditando);
 
             $empleado->update([
@@ -223,7 +234,10 @@ new class extends Component
             ->when(
                 $this->filtroEstado !== '',
                 function ($query) {
-                    $query->where('estado', $this->filtroEstado);
+                    $query->where(
+                        'estado',
+                        $this->filtroEstado
+                    );
                 }
             )
             ->latest()
@@ -241,154 +255,73 @@ new class extends Component
     <div class="mx-auto max-w-7xl">
 
         {{-- ENCABEZADO --}}
-        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="mb-8 flex items-center justify-between">
 
             <div>
-                <div class="mb-2 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    <flux:icon name="users" class="size-4" />
-                    <span>Gestión del personal</span>
-                    <span>/</span>
-                    <span>Empleados</span>
-                </div>
+                <p class="mb-2 text-sm text-zinc-500 dark:text-zinc-400">
+                    Administración / Empleados
+                </p>
 
-                <h1 class="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-white">
                     Empleados
                 </h1>
 
                 <p class="mt-1 text-zinc-600 dark:text-zinc-400">
-                    Administra la información del personal de la empresa.
+                    Registra y administra el personal de la empresa.
                 </p>
             </div>
 
             <flux:button
-    variant="primary"
-    icon="plus"
-    wire:click="abrirFormulario"
-    class="!bg-teal-500 !text-white hover:!bg-teal-600"
->
-    Nuevo empleado
-</flux:button>
+                variant="primary"
+                icon="plus"
+                wire:click="abrirFormulario"
+            >
+                Nuevo empleado
+            </flux:button>
 
         </div>
+
 
         {{-- MENSAJE --}}
         @if (session('mensaje'))
-            <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
-                <flux:icon name="check-circle" class="size-5 shrink-0" />
-                <span>{{ session('mensaje') }}</span>
+
+            <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
+                ✓ {{ session('mensaje') }}
             </div>
+
         @endif
 
-        {{-- TARJETAS DE RESUMEN --}}
-        <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-
-            {{-- Total --}}
-            <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                            Total de empleados
-                        </p>
-
-                        <p class="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-                            {{ \App\Models\Empleado::count() }}
-                        </p>
-                    </div>
-
-                    <div class="rounded-xl bg-blue-100 p-3 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                        <flux:icon name="users" class="size-6" />
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- Activos --}}
-            <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                            Empleados activos
-                        </p>
-
-                        <p class="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                            {{ \App\Models\Empleado::where('estado', 'Activo')->count() }}
-                        </p>
-                    </div>
-
-                    <div class="rounded-xl bg-emerald-100 p-3 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-                        <flux:icon name="check-circle" class="size-6" />
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- Inactivos --}}
-            <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <div class="flex items-center justify-between">
-
-                    <div>
-                        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                            Empleados inactivos
-                        </p>
-
-                        <p class="mt-2 text-3xl font-bold text-zinc-700 dark:text-zinc-300">
-                            {{ \App\Models\Empleado::where('estado', 'Inactivo')->count() }}
-                        </p>
-                    </div>
-
-                    <div class="rounded-xl bg-zinc-100 p-3 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                        <flux:icon name="user-minus" class="size-6" />
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
 
         {{-- FORMULARIO --}}
         @if ($mostrarFormulario)
 
-            <div class="mb-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div class="mb-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
-                <div class="border-b border-zinc-200 bg-zinc-50 px-6 py-5 dark:border-zinc-800 dark:bg-zinc-950">
+                <div class="mb-6 flex items-center justify-between">
 
-                    <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-zinc-900 dark:text-white">
+                            {{ $empleadoEditando ? 'Editar empleado' : 'Nuevo empleado' }}
+                        </h2>
 
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <div class="rounded-lg bg-blue-100 p-2 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                                    <flux:icon
-                                        name="{{ $empleadoEditando ? 'pencil-square' : 'user-plus' }}"
-                                        class="size-5"
-                                    />
-                                </div>
-
-                                <h2 class="text-xl font-semibold text-zinc-900 dark:text-white">
-                                    {{ $empleadoEditando ? 'Editar empleado' : 'Nuevo empleado' }}
-                                </h2>
-                            </div>
-
-                            <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $empleadoEditando
-                                    ? 'Actualiza la información del empleado seleccionado.'
-                                    : 'Completa los datos para registrar un nuevo empleado.'
-                                }}
-                            </p>
-                        </div>
-
-                        <flux:button
-                            variant="ghost"
-                            icon="x-mark"
-                            wire:click="cerrarFormulario"
-                        />
-
+                        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                            {{ $empleadoEditando
+                                ? 'Modifica los datos del empleado.'
+                                : 'Registra los datos del nuevo empleado.'
+                            }}
+                        </p>
                     </div>
+
+                    <flux:button
+                        variant="ghost"
+                        icon="x-mark"
+                        wire:click="cerrarFormulario"
+                    />
 
                 </div>
 
-                <form wire:submit="guardar" class="p-6">
+
+                <form wire:submit="guardar">
 
                     <div class="grid gap-5 md:grid-cols-2">
 
@@ -448,14 +381,18 @@ new class extends Component
 
                     </div>
 
+
+                    {{-- ERRORES --}}
                     @if ($errors->any())
-                        <div class="mt-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
-                            <flux:icon name="exclamation-circle" class="mt-0.5 size-5 shrink-0" />
-                            <span>Revisa los campos marcados antes de guardar.</span>
+
+                        <div class="mt-5 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+                            Revisa los campos marcados antes de guardar.
                         </div>
+
                     @endif
 
-                    <div class="mt-6 flex flex-col-reverse gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:justify-end dark:border-zinc-800">
+
+                    <div class="mt-6 flex justify-end gap-3">
 
                         <flux:button
                             type="button"
@@ -480,76 +417,80 @@ new class extends Component
 
         @endif
 
-        {{-- LISTADO --}}
+
+        {{-- TABLA --}}
         <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
-{{-- FILTROS --}}
-<div class="border-b border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-950">
-    <div class="grid gap-4 lg:grid-cols-3">
+            {{-- FILTROS --}}
+            <div class="border-b border-zinc-200 p-4 dark:border-zinc-800">
 
-        <div class="lg:col-span-2">
-            <flux:input
-                wire:model.live.debounce.300ms="buscar"
-                icon="magnifying-glass"
-                label="Buscar empleado"
-                placeholder="Nombre, DNI, cargo o área..."
-                class="w-full"
-            />
-        </div>
+                <div class="grid gap-3 md:grid-cols-2">
 
-        <div>
-            <flux:select
-                wire:model.live="filtroEstado"
-                label="Filtrar por estado"
-                class="w-full"
-            >
-                <option value="">Todos los estados</option>
-                <option value="Activo">Activos</option>
-                <option value="Inactivo">Inactivos</option>
-            </flux:select>
-        </div>
+                    <flux:input
+                        wire:model.live.debounce.300ms="buscar"
+                        icon="magnifying-glass"
+                        placeholder="Buscar por nombre, DNI, cargo o área..."
+                    />
 
-    </div>
-</div>
+                    <flux:select wire:model.live="filtroEstado">
+
+                        <option value="">
+                            Todos los estados
+                        </option>
+
+                        <option value="Activo">
+                            Activos
+                        </option>
+
+                        <option value="Inactivo">
+                            Inactivos
+                        </option>
+
+                    </flux:select>
+
+                </div>
+
+            </div>
+
 
             {{-- TABLA --}}
             <div class="overflow-x-auto">
 
                 <table class="w-full text-left text-sm">
 
-                    <thead class="border-b border-zinc-200 bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
+                    <thead class="bg-zinc-50 text-xs uppercase text-zinc-500 dark:bg-zinc-950 dark:text-zinc-400">
 
                         <tr>
 
-                            <th class="whitespace-nowrap px-6 py-4">
-                                Empleado
-                            </th>
-
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
                                 DNI
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
+                                Empleado
+                            </th>
+
+                            <th class="px-6 py-4">
                                 Cargo
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
                                 Área
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
                                 Ingreso
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
                                 Salario
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4">
+                            <th class="px-6 py-4">
                                 Estado
                             </th>
 
-                            <th class="whitespace-nowrap px-6 py-4 text-right">
+                            <th class="px-6 py-4 text-right">
                                 Acciones
                             </th>
 
@@ -557,69 +498,46 @@ new class extends Component
 
                     </thead>
 
+
                     <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
 
                         @forelse ($empleados as $empleado)
 
-                            <tr class="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
 
-                                {{-- Empleado --}}
-                                <td class="px-6 py-4">
-
-                                    <div class="flex items-center gap-3">
-
-                                        <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                                            {{ strtoupper(substr($empleado->nombres, 0, 1) . substr($empleado->apellidos, 0, 1)) }}
-                                        </div>
-
-                                        <div class="min-w-0">
-                                            <p class="truncate font-semibold text-zinc-900 dark:text-white">
-                                                {{ $empleado->nombres }} {{ $empleado->apellidos }}
-                                            </p>
-
-                                            <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                                                {{ $empleado->cargo }}
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-                                {{-- DNI --}}
-                                <td class="whitespace-nowrap px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">
+                                <td class="px-6 py-4 font-medium text-zinc-900 dark:text-white">
                                     {{ $empleado->dni }}
                                 </td>
 
-                                {{-- Cargo --}}
-                                <td class="whitespace-nowrap px-6 py-4 text-zinc-600 dark:text-zinc-300">
+                                <td class="px-6 py-4 text-zinc-700 dark:text-zinc-300">
+                                    {{ $empleado->nombres }}
+                                    {{ $empleado->apellidos }}
+                                </td>
+
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">
                                     {{ $empleado->cargo }}
                                 </td>
 
-                                {{-- Área --}}
-                                <td class="whitespace-nowrap px-6 py-4 text-zinc-600 dark:text-zinc-300">
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">
                                     {{ $empleado->area }}
                                 </td>
 
-                                {{-- Fecha --}}
-                                <td class="whitespace-nowrap px-6 py-4 text-zinc-600 dark:text-zinc-300">
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300">
                                     {{ $empleado->fecha_ingreso?->format('d/m/Y') }}
                                 </td>
 
-                                {{-- Salario --}}
-                                <td class="whitespace-nowrap px-6 py-4 font-semibold text-zinc-900 dark:text-white">
+                                <td class="px-6 py-4 font-medium text-zinc-900 dark:text-white">
                                     S/ {{ number_format($empleado->salario, 2) }}
                                 </td>
 
-                                {{-- Estado --}}
-                                <td class="whitespace-nowrap px-6 py-4">
+                                <td class="px-6 py-4">
 
                                     @if ($empleado->estado === 'Activo')
 
                                         <button
                                             type="button"
                                             wire:click="cambiarEstado({{ $empleado->id }})"
-                                            class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950"
+                                            class="inline-flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700"
                                         >
                                             <span class="size-2 rounded-full bg-emerald-500"></span>
                                             Activo
@@ -630,7 +548,7 @@ new class extends Component
                                         <button
                                             type="button"
                                             wire:click="cambiarEstado({{ $empleado->id }})"
-                                            class="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100 dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-950"
+                                            class="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700"
                                         >
                                             <span class="size-2 rounded-full bg-red-500"></span>
                                             Inactivo
@@ -640,16 +558,15 @@ new class extends Component
 
                                 </td>
 
-                                {{-- Acciones --}}
+
                                 <td class="px-6 py-4 text-right">
 
-                                    <div class="flex justify-end gap-1">
+                                    <div class="flex justify-end gap-2">
 
                                         <flux:button
                                             wire:click="editar({{ $empleado->id }})"
                                             variant="ghost"
                                             icon="pencil"
-                                            tooltip="Editar empleado"
                                         />
 
                                         <flux:button
@@ -657,7 +574,6 @@ new class extends Component
                                             wire:confirm="¿Estás seguro de eliminar este empleado?"
                                             variant="ghost"
                                             icon="trash"
-                                            tooltip="Eliminar empleado"
                                         />
 
                                     </div>
@@ -670,24 +586,17 @@ new class extends Component
 
                             <tr>
 
-                                <td colspan="8" class="px-6 py-16 text-center">
+                                <td
+                                    colspan="8"
+                                    class="px-6 py-12 text-center"
+                                >
+                                    <p class="font-medium text-zinc-900 dark:text-white">
+                                        No se encontraron empleados.
+                                    </p>
 
-                                    <div class="mx-auto flex max-w-sm flex-col items-center">
-
-                                        <div class="mb-4 rounded-full bg-zinc-100 p-4 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                            <flux:icon name="users" class="size-8" />
-                                        </div>
-
-                                        <p class="font-semibold text-zinc-900 dark:text-white">
-                                            No se encontraron empleados
-                                        </p>
-
-                                        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                                            Intenta modificar los filtros de búsqueda.
-                                        </p>
-
-                                    </div>
-
+                                    <p class="mt-1 text-sm text-zinc-500">
+                                        Intenta modificar los filtros.
+                                    </p>
                                 </td>
 
                             </tr>
@@ -699,6 +608,7 @@ new class extends Component
                 </table>
 
             </div>
+
 
             {{-- PAGINACIÓN --}}
             @if ($empleados->hasPages())
