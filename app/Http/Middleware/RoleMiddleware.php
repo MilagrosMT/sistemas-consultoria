@@ -9,32 +9,29 @@ use Symfony\Component\HttpFoundation\Response;
 class RoleMiddleware
 {
     /**
-     * Verifica que el usuario tenga uno de los roles permitidos.
+     * Verifica que el usuario esté activo y tenga un rol permitido.
      */
     public function handle(
         Request $request,
         Closure $next,
-        ...$roles
+        string ...$roles
     ): Response {
-        // Si no hay usuario autenticado, Laravel se encarga
-        // de enviarlo al inicio de sesión.
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
-        // Obtenemos el usuario actualmente autenticado.
         $usuario = auth()->user();
 
-        // Obtenemos el nombre de su rol.
+        if (! $usuario->activo) {
+            abort(403, 'Tu cuenta está inactiva. Contacta con el administrador.');
+        }
+
         $rol = $usuario->role?->nombre;
 
-        // Si el usuario no tiene rol o su rol no está permitido,
-        // mostramos un error de autorización.
-        if (!$rol || !in_array($rol, $roles)) {
+        if (! $rol || ! in_array($rol, $roles, true)) {
             abort(403, 'No tienes permisos para acceder a esta sección.');
         }
 
         return $next($request);
     }
 }
-
