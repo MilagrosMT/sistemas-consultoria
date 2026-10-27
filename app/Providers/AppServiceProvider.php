@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureSecurityLogging();
     }
 
     /**
@@ -46,5 +50,23 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Register security-related event logging.
+     */
+    protected function configureSecurityLogging(): void
+    {
+        Event::listen(Failed::class, function (Failed $event): void {
+            $identifier = $event->credentials['email']
+                ?? $event->credentials['username']
+                ?? 'desconocido';
+
+            Log::warning('Intento de autenticación fallido', [
+                'usuario' => $identifier,
+                'ip' => request()->ip(),
+                'fecha' => now()->toDateTimeString(),
+            ]);
+        });
     }
 }

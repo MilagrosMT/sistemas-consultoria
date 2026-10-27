@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
@@ -77,5 +78,45 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('home'));
 
         $this->assertGuest();
+    }
+
+    public function test_inactive_users_cannot_authenticate(): void
+    {
+        $rol = Role::create([
+            'nombre' => 'Administrador',
+            'descripcion' => 'Rol para prueba',
+            'activo' => true,
+        ]);
+
+        $user = User::factory()->create([
+            'role_id' => $rol->id,
+            'activo' => false,
+        ]);
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+    }
+
+    public function test_inactive_users_with_two_factor_enabled_cannot_authenticate(): void
+    {
+        $user = User::factory()
+            ->withTwoFactor()
+            ->create();
+
+        $user->activo = false;
+        $user->save();
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+
+        $response->assertSessionHasErrors('email');
     }
 }

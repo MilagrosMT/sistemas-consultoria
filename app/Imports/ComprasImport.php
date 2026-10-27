@@ -14,6 +14,7 @@ class ComprasImport implements ToCollection, WithHeadingRow
 {
     public int $importadas = 0;
 
+    /** @var list<array{fila: int, mensaje: string}> */
     public array $errores = [];
 
     public function collection(Collection $rows): void
@@ -75,7 +76,7 @@ class ComprasImport implements ToCollection, WithHeadingRow
 
             $cliente = Cliente::where('ruc', $datos['cliente_ruc'])->first();
 
-            if (!$cliente) {
+            if (! $cliente) {
                 $this->errores[] = [
                     'fila' => $fila,
                     'mensaje' => "No existe un cliente registrado con RUC {$datos['cliente_ruc']}.",

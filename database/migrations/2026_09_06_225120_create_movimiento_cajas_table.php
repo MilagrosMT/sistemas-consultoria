@@ -30,7 +30,7 @@ return new class extends Migration
                 'Transferencia',
                 'Tarjeta',
                 'Yape/Plin',
-                'Otro'
+                'Otro',
             ])->default('Efectivo');
 
             // Importe

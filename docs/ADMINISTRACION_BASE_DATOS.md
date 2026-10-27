@@ -70,6 +70,8 @@ Las principales tablas de negocio son:
 - `users`
 - `passkeys`
 - `configuracion_sistemas`
+- `documento_clientes`
+- `solicitudes`
 
 Además, existen tablas internas utilizadas por Laravel para funciones del framework, como sesiones, caché, trabajos y migraciones.
 
@@ -92,6 +94,12 @@ Las relaciones principales implementadas en MySQL son:
 - `ventas.cliente_id` → `clientes.id`
 - `ventas.servicio_id` → `servicios.id`
 - `passkeys.user_id` → `users.id`
+- `documento_clientes.cliente_id` → `clientes.id`
+- `documento_clientes.contrato_id` → `contratos.id` (opcional)
+- `documento_clientes.usuario_id` → `users.id` (opcional)
+- `solicitudes.solicitante_id` → `users.id`
+- `solicitudes.responsable_id` → `users.id` (opcional)
+- `solicitudes.aprobador_id` → `users.id` (opcional)
 
 Las relaciones de las tablas dependientes se estructuran principalmente como relaciones de uno a muchos (1:N).
 

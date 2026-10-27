@@ -14,6 +14,7 @@ class VentasClientesImport implements ToCollection, WithHeadingRow
 {
     public int $importadas = 0;
 
+    /** @var list<array{fila: int, mensaje: string}> */
     public array $errores = [];
 
     public function collection(Collection $rows): void
@@ -74,7 +75,7 @@ class VentasClientesImport implements ToCollection, WithHeadingRow
 
             $cliente = Cliente::where('ruc', $datos['cliente_ruc'])->first();
 
-            if (!$cliente) {
+            if (! $cliente) {
                 $this->errores[] = [
                     'fila' => $fila,
                     'mensaje' => "No existe un cliente registrado con RUC {$datos['cliente_ruc']}.",
@@ -86,7 +87,7 @@ class VentasClientesImport implements ToCollection, WithHeadingRow
             try {
                 $fechaEmision = $this->convertirFecha($datos['fecha_emision']);
 
-                if (!$fechaEmision) {
+                if (! $fechaEmision) {
                     $this->errores[] = [
                         'fila' => $fila,
                         'mensaje' => 'La fecha de emisión no es válida.',

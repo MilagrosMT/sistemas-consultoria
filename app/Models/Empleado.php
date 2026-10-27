@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Planilla;
 
 class Empleado extends Model
 {
@@ -26,8 +25,12 @@ class Empleado extends Model
             'salario' => 'decimal:2',
         ];
     }
-public function planillas(): HasMany
-{
-    return $this->hasMany(Planilla::class);
-}
+
+    /**
+     * @return HasMany<Planilla, $this>
+     */
+    public function planillas(): HasMany
+    {
+        return $this->hasMany(Planilla::class);
+    }
 }

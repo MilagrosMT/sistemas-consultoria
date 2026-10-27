@@ -21,6 +21,9 @@ class Servicio extends Model
         ];
     }
 
+    /**
+     * @return HasMany<Cliente, $this>
+     */
     public function clientes(): HasMany
     {
         return $this->hasMany(Cliente::class);

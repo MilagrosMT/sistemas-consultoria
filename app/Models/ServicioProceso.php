@@ -28,21 +28,33 @@ class ServicioProceso extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Cliente, $this>
+     */
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
     }
 
+    /**
+     * @return BelongsTo<Contrato, $this>
+     */
     public function contrato(): BelongsTo
     {
         return $this->belongsTo(Contrato::class);
     }
 
+    /**
+     * @return BelongsTo<Servicio, $this>
+     */
     public function servicio(): BelongsTo
     {
         return $this->belongsTo(Servicio::class);
     }
 
+    /**
+     * @return BelongsTo<Empleado, $this>
+     */
     public function empleado(): BelongsTo
     {
         return $this->belongsTo(Empleado::class);

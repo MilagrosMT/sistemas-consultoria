@@ -26,3 +26,23 @@ yarn-error.log
 /storage/framework/cache/
 /storage/framework/sessions/
 /storage/framework/testing/
+
+# Archivos sensibles y respaldos locales
+/.env.docker
+/sistemas_consultoria_pre_replica.sql
+/error_respaldo.txt
+
+/sistemas_consultoria_pre_recuperacion.sql
+
+
+# Respaldos locales y herramientas temporales
+/backups/
+*.bak
+*.tar.gz
+/repair_solicituds.php
+/verificar_solicituds.php
+/mejorar_mis_solicitudes_corregido.ps1
+/corregir_tipos_relaciones.ps1
+/corregir_tipos_modelos_restantes.ps1
+/corregir_tipos_modelos_restantes_corregido.ps1
+/resources/views/components/*backup.blade.php

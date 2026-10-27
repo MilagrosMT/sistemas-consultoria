@@ -22,10 +22,10 @@ class DatabaseHealth extends Command
             $tables = DB::select('SHOW TABLES');
 
             $this->info('Estado de la base de datos: OK');
-            $this->line('Motor: ' . strtoupper($driver));
-            $this->line('Base de datos: ' . $database);
-            $this->line('Versión MySQL: ' . $version);
-            $this->line('Tablas encontradas: ' . count($tables));
+            $this->line('Motor: '.strtoupper($driver));
+            $this->line('Base de datos: '.$database);
+            $this->line('Versión MySQL: '.$version);
+            $this->line('Tablas encontradas: '.count($tables));
 
             return self::SUCCESS;
 

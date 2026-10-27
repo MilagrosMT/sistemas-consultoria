@@ -27,7 +27,7 @@ return new class extends Migration
             $table->enum('estado', [
                 'Activo',
                 'Finalizado',
-                'Suspendido'
+                'Suspendido',
             ])->default('Activo');
 
             $table->text('observaciones')->nullable();

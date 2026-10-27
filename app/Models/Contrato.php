@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contrato extends Model
 {
@@ -26,13 +27,27 @@ class Contrato extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Cliente, $this>
+     */
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
     }
 
+    /**
+     * @return BelongsTo<Servicio, $this>
+     */
     public function servicio(): BelongsTo
     {
         return $this->belongsTo(Servicio::class);
+    }
+
+    /**
+     * @return HasMany<DocumentoCliente, $this>
+     */
+    public function documentos(): HasMany
+    {
+        return $this->hasMany(DocumentoCliente::class);
     }
 }

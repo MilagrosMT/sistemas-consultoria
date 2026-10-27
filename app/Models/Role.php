@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $nombre
+ * @property string|null $descripcion
+ * @property bool $activo
+ */
 class Role extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -23,6 +25,9 @@ class Role extends Model
         ];
     }
 
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

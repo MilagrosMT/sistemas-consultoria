@@ -1,0 +1,33 @@
+
+.git
+.gitignore
+
+.env
+.env.*
+!.env.example
+
+vendor/
+node_modules/
+
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/backups/*
+
+.DS_Store
+Thumbs.db
+
+docker-compose.override.yml
+
+
+# Respaldos locales: no incluir en imagenes Docker
+/backups/
+*.bak
+*.tar.gz
+/*.sql
+/error_respaldo.txt
+
+# Documentos locales: no incluirlos en las imagenes Docker
+/storage/app/private/
+/storage/app/public/

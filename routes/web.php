@@ -31,16 +31,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware([
     'auth',
     'verified',
-    'role:Administrador,Recursos Humanos,Contabilidad,Consulta'
+    'role:Administrador,Recursos Humanos,Contabilidad,Consulta',
 ])->group(function () {
 
     // Empleados
     Route::livewire('/empleados', 'empleados')
         ->name('empleados');
 
-// Clientes
-Route::livewire('/clientes', 'clientes')
-    ->name('clientes');
+    // Clientes
+    Route::livewire('/clientes', 'clientes')
+        ->name('clientes');
 
     // Reclutamiento
     Route::livewire('/reclutamiento', 'reclutamiento')
@@ -53,32 +53,44 @@ Route::livewire('/clientes', 'clientes')
     // Administración tributaria
     Route::livewire('/administracion-tributaria', 'administracion-tributaria')
         ->name('administracion-tributaria');
-Route::livewire('/reportes','reportes')->name('reportes');
-// Servicios
-Route::livewire('/servicios', 'servicios')
-    ->name('servicios');
-// Contratos
-Route::livewire('/contratos', 'contratos')
-    ->name('contratos');
+    Route::livewire('/reportes', 'reportes')->name('reportes');
+    // Servicios
+    Route::livewire('/servicios', 'servicios')
+        ->name('servicios');
+    // Contratos
+    Route::livewire('/contratos', 'contratos')
+        ->name('contratos');
 
-// Marketing
-Route::livewire('/marketing', 'marketing')
-    ->name('marketing');
-// Ventas / Facturación
-Route::livewire('/ventas', 'ventas')
-    ->name('ventas');
-Route::livewire('/ventas-clientes', 'ventas-clientes')->name('ventas-clientes');
-Route::livewire('/caja-clientes', 'caja-clientes')->name('caja-clientes');
-Route::livewire('/procesamiento-contable', 'procesamiento-contable')->name('procesamiento-contable');
-Route::livewire('/operaciones', 'operaciones')->name('operaciones');
-Route::livewire('/comprobante/{venta}', 'comprobante')->name('comprobante');
-Route::livewire('/compras', 'compras')->name('compras');
-// Configuración general
-Route::livewire('/configuracion', 'configuracion')
-    ->name('configuracion');
+    // Marketing
+    Route::livewire('/marketing', 'marketing')
+        ->name('marketing');
+    // Ventas / Facturación
+    Route::livewire('/ventas', 'ventas')
+        ->name('ventas');
+    Route::livewire('/ventas-clientes', 'ventas-clientes')->name('ventas-clientes');
+    Route::livewire('/caja-clientes', 'caja-clientes')->name('caja-clientes');
+    Route::livewire('/procesamiento-contable', 'procesamiento-contable')->name('procesamiento-contable');
+    Route::livewire('/operaciones', 'operaciones')->name('operaciones');
+    Route::livewire('/comprobante/{venta}', 'comprobante')->name('comprobante');
+    Route::livewire('/compras', 'compras')->name('compras');
+    // Gestión documentaria
+    Route::livewire('/documentos-clientes', 'documentos-clientes')
+        ->name('documentos-clientes');
+    Route::livewire('/solicitudes', 'solicitudes')
+        ->name('solicitudes');
+
+    // Gestión de solicitudes: solo personal autorizado.
+    Route::middleware(['role:Administrador,Recursos Humanos,Contabilidad'])
+        ->group(function () {
+            Route::livewire('/gestion-solicitudes', 'gestion-solicitudes')
+                ->name('gestion-solicitudes');
+        });
+
+    // Configuración general
+    Route::livewire('/configuracion', 'configuracion')
+        ->name('configuracion');
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -92,7 +104,7 @@ Route::livewire('/configuracion', 'configuracion')
 Route::middleware([
     'auth',
     'verified',
-    'role:Administrador'
+    'role:Administrador',
 ])->group(function () {
 
     Route::livewire('/usuarios', 'usuarios')
@@ -102,7 +114,6 @@ Route::middleware([
         ->name('roles');
 
 });
-
 
 /*
 |--------------------------------------------------------------------------

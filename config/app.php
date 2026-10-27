@@ -64,9 +64,10 @@ return [
     | is set to "UTC" by default as it is suitable for most use cases.
     |
     */
-
-    'timezone' => 'UTC',
-
+    /*
+    |'timezone' => 'UTC',
+    */
+    'timezone' => 'America/Lima',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
