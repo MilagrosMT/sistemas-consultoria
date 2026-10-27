@@ -23,43 +23,51 @@ class DatabaseBackup extends Command
 
         $backupDirectory = storage_path('app/backups');
 
-        if (!is_dir($backupDirectory)) {
+        if (! is_dir($backupDirectory)) {
             mkdir($backupDirectory, 0755, true);
         }
 
-        $filename = $database . '_' . now()->format('Y-m-d_H-i-s') . '.sql';
-        $backupPath = $backupDirectory . DIRECTORY_SEPARATOR . $filename;
+        $filename = $database.'_'.now()->format('Y-m-d_H-i-s').'.sql';
+        $backupPath = $backupDirectory.DIRECTORY_SEPARATOR.$filename;
 
         $process = new Process([
             $mysqldump,
             '--protocol=TCP',
-            '--host=' . $host,
-            '--port=' . $port,
-            '--user=' . $username,
-            '--password=' . $password,
-            '--result-file=' . $backupPath,
+            '--host='.$host,
+            '--port='.$port,
+            '--user='.$username,
+            '--password='.$password,
+            '--result-file='.$backupPath,
             $database,
         ]);
 
         $process->setTimeout(300);
         $process->run();
 
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             $this->error('No se pudo generar el backup.');
             $this->error($process->getErrorOutput());
 
             return self::FAILURE;
         }
 
-        if (!file_exists($backupPath) || filesize($backupPath) === 0) {
+        if (! file_exists($backupPath)) {
+            $this->error('El archivo de backup no fue generado correctamente.');
+
+            return self::FAILURE;
+        }
+
+        $backupSize = filesize($backupPath);
+
+        if ($backupSize === false || $backupSize <= 0) {
             $this->error('El archivo de backup no fue generado correctamente.');
 
             return self::FAILURE;
         }
 
         $this->info('Backup generado correctamente.');
-        $this->line('Archivo: ' . $backupPath);
-        $this->line('Tamaño: ' . number_format(filesize($backupPath)) . ' bytes');
+        $this->line('Archivo: '.$backupPath);
+        $this->line('Tamaño: '.number_format($backupSize).' bytes');
 
         return self::SUCCESS;
     }

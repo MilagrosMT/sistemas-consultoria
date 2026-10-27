@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('postulantes', function (Blueprint $table) {
-    $table->id();
+            $table->id();
 
-    $table->string('nombres');
-    $table->string('apellidos');
-    $table->string('dni', 8)->unique();
-    $table->string('telefono', 9)->nullable();
-    $table->string('email')->nullable();
-    $table->string('puesto');
-    $table->date('fecha_postulacion');
-    $table->string('estado')->default('Postulando');
+            $table->string('nombres');
+            $table->string('apellidos');
+            $table->string('dni', 8)->unique();
+            $table->string('telefono', 9)->nullable();
+            $table->string('email')->nullable();
+            $table->string('puesto');
+            $table->date('fecha_postulacion');
+            $table->string('estado')->default('Postulando');
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**

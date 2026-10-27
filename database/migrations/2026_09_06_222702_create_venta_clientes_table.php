@@ -49,7 +49,7 @@ return new class extends Migration
                 'cliente_id',
                 'tipo_comprobante',
                 'serie',
-                'numero'
+                'numero',
             ], 'venta_cliente_comprobante_unico');
         });
     }

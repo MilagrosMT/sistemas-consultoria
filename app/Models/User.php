@@ -7,12 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Role;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -42,16 +42,19 @@ class User extends Authenticatable implements PasskeyUser
      *
      * @return array<string, string>
      */
-protected function casts(): array
-{
-    return [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'activo' => 'boolean',
-    ];
-}
- /**
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'activo' => 'boolean',
+        ];
+    }
+
+    /**
      * Rol asignado al usuario.
+     *
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {
@@ -68,5 +71,13 @@ protected function casts(): array
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+    /**
+     * @return HasMany<DocumentoCliente, $this>
+     */
+    public function documentosCargados()
+    {
+        return $this->hasMany(DocumentoCliente::class, 'usuario_id');
     }
 }

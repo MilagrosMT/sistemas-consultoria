@@ -33,6 +33,9 @@ class VentaCliente extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Cliente, $this>
+     */
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);

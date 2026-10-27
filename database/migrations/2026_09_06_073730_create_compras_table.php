@@ -51,7 +51,7 @@ return new class extends Migration
                 'ruc_proveedor',
                 'tipo_comprobante',
                 'serie',
-                'numero'
+                'numero',
             ], 'compras_comprobante_unico');
         });
     }

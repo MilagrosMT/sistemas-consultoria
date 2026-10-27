@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-Schema::create('obligacion_tributarias', function (Blueprint $table) {
-    $table->id();
+        Schema::create('obligacion_tributarias', function (Blueprint $table) {
+            $table->id();
 
-    $table->string('cliente');
-    $table->string('ruc', 11);
-    $table->string('tipo_obligacion');
-    $table->string('periodo');
-    $table->date('fecha_vencimiento');
-    $table->decimal('monto', 10, 2)->default(0);
-    $table->string('estado')->default('Pendiente');
+            $table->string('cliente');
+            $table->string('ruc', 11);
+            $table->string('tipo_obligacion');
+            $table->string('periodo');
+            $table->date('fecha_vencimiento');
+            $table->decimal('monto', 10, 2)->default(0);
+            $table->string('estado')->default('Pendiente');
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**

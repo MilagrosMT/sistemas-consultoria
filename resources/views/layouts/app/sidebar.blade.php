@@ -216,25 +216,47 @@
 
     </flux:sidebar.group>
 
+{{-- GESTIÓN DOCUMENTARIA --}}
+<flux:sidebar.group heading="Gestión Documentaria" class="grid">
 
-    {{-- GESTIÓN DOCUMENTARIA --}}
-    <flux:sidebar.group heading="Gestión Documentaria" class="grid">
+    <flux:sidebar.item
+        icon="folder"
+        href="{{ route('documentos-clientes') }}"
+        :current="request()->routeIs('documentos-clientes')"
+    >
+        Documentos de clientes
+    </flux:sidebar.item>
 
-        <flux:sidebar.item
-            icon="folder"
-            disabled
-        >
-            Documentos de clientes
-        </flux:sidebar.item>
 
-        <flux:sidebar.item
-            icon="document-duplicate"
-            disabled
-        >
-            Expedientes
-        </flux:sidebar.item>
+    <flux:sidebar.item
+        icon="clipboard-document-list"
+        href="{{ route('solicitudes') }}"
+        :current="request()->routeIs('solicitudes')"
+        wire:navigate
+    >
+        Solicitudes
+    </flux:sidebar.item>
 
-    </flux:sidebar.group>
+
+       @if (in_array(auth()->user()->role?->nombre, ['Administrador', 'Recursos Humanos', 'Contabilidad'], true))
+    <flux:sidebar.item
+        icon="clipboard-document-check"
+        href="{{ route('gestion-solicitudes') }}"
+        :current="request()->routeIs('gestion-solicitudes')"
+        wire:navigate
+    >
+        Gestión de solicitudes
+    </flux:sidebar.item>
+@endif
+
+    <flux:sidebar.item
+        icon="document-duplicate"
+        disabled
+    >
+        Expedientes
+    </flux:sidebar.item>
+
+</flux:sidebar.group>
 
 
     {{-- REPORTES Y GERENCIA --}}

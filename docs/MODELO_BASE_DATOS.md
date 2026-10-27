@@ -364,6 +364,60 @@ erDiagram
 | formato_fecha | varchar(255) | |
 | zona_horaria | varchar(255) | |
 
+### 3.17 `documento_clientes`
+
+| Atributo | Tipo | Clave |
+|---|---|---|
+| id | bigint unsigned | PK |
+| cliente_id | bigint unsigned | FK |
+| contrato_id | bigint unsigned nullable | FK |
+| usuario_id | bigint unsigned nullable | FK |
+| nombre | varchar(255) | |
+| tipo_documento | varchar(255) | |
+| nombre_archivo | varchar(255) | |
+| ruta_archivo | varchar(255) | |
+| mime_type | varchar(255) nullable | |
+| tamano_bytes | bigint unsigned | |
+| descripcion | text nullable | |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Relaciones y comportamiento:** cada documento pertenece a un cliente. Puede asociarse opcionalmente con un contrato y un usuario. Al eliminar el cliente, sus documentos relacionados se eliminan mediante cascada; al eliminar el contrato o usuario asociado, la referencia correspondiente pasa a `NULL`.
+
+Los archivos se almacenan en el disco privado de Laravel y se descargan mediante la aplicación, no mediante una URL pública directa.
+
+### 3.18 `solicitudes`
+
+| Atributo | Tipo | Clave |
+|---|---|---|
+| id | bigint unsigned | PK |
+| codigo | varchar(25) | UK |
+| solicitante_id | bigint unsigned | FK |
+| tipo | enum | |
+| asunto | varchar(150) | |
+| descripcion | text | |
+| prioridad | enum | |
+| estado | enum | |
+| responsable_id | bigint unsigned nullable | FK |
+| aprobador_id | bigint unsigned nullable | FK |
+| fecha_aprobacion | timestamp nullable | |
+| fecha_resolucion | timestamp nullable | |
+| fecha_cierre | timestamp nullable | |
+| respuesta | text nullable | |
+| motivo_rechazo | text nullable | |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Valores de `tipo`:** `Acceso`, `Servicio`, `Información`.
+
+**Valores de `prioridad`:** `Baja`, `Media`, `Alta`, `Crítica`. El valor predeterminado es `Media`.
+
+**Valores de `estado`:** `Recibida`, `En validación`, `Pendiente de aprobación`, `En atención`, `Pendiente del solicitante`, `Resuelta`, `Cerrada` y `Rechazada`. El valor predeterminado es `Recibida`.
+
+El solicitante está relacionado con `users` mediante una clave foránea que impide eliminar al usuario mientras existan solicitudes asociadas. Las referencias al responsable y al aprobador son opcionales y pasan a `NULL` cuando se elimina el usuario correspondiente.
+
+La tabla incluye índices para búsquedas por tipo y estado, solicitudes de cada solicitante por fecha de creación y solicitudes asignadas a cada responsable por estado.
+
 ## 4. Relaciones y cardinalidades
 
 | Tabla origen | Tabla destino | FK | Cardinalidad |
@@ -383,6 +437,12 @@ erDiagram
 | clientes | venta_clientes | venta_clientes.cliente_id | 1:N |
 | clientes | ventas | ventas.cliente_id | 1:N |
 | servicios | ventas | ventas.servicio_id | 1:N |
+| clientes | documento_clientes | documento_clientes.cliente_id | 1:N |
+| contratos | documento_clientes | documento_clientes.contrato_id | 1:N (opcional) |
+| users | documento_clientes | documento_clientes.usuario_id | 1:N (opcional) |
+| users | solicitudes | solicitudes.solicitante_id | 1:N |
+| users | solicitudes | solicitudes.responsable_id | 1:N (opcional) |
+| users | solicitudes | solicitudes.aprobador_id | 1:N (opcional) |
 
 ## 5. Observaciones de diseño
 

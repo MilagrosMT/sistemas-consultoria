@@ -40,11 +40,17 @@ class Venta extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Cliente, $this>
+     */
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
     }
 
+    /**
+     * @return BelongsTo<Servicio, $this>
+     */
     public function servicio(): BelongsTo
     {
         return $this->belongsTo(Servicio::class);

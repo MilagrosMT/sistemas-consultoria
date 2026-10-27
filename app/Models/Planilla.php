@@ -28,6 +28,9 @@ class Planilla extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Empleado, $this>
+     */
     public function empleado(): BelongsTo
     {
         return $this->belongsTo(Empleado::class);

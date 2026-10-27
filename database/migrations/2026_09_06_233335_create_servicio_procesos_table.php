@@ -39,14 +39,14 @@ return new class extends Migration
             $table->enum('prioridad', [
                 'Baja',
                 'Media',
-                'Alta'
+                'Alta',
             ])->default('Media');
 
             $table->enum('estado', [
                 'Pendiente',
                 'En proceso',
                 'Completado',
-                'Observado'
+                'Observado',
             ])->default('Pendiente');
 
             $table->text('observacion')

@@ -20,12 +20,27 @@ class Cliente extends Model
         'estado',
     ];
 
+    /**
+     * @return BelongsTo<Servicio, $this>
+     */
     public function servicio(): BelongsTo
     {
         return $this->belongsTo(Servicio::class);
     }
-public function contratos(): HasMany
-{
-    return $this->hasMany(Contrato::class);
-}
+
+    /**
+     * @return HasMany<Contrato, $this>
+     */
+    public function contratos(): HasMany
+    {
+        return $this->hasMany(Contrato::class);
+    }
+
+    /**
+     * @return HasMany<DocumentoCliente, $this>
+     */
+    public function documentos(): HasMany
+    {
+        return $this->hasMany(DocumentoCliente::class);
+    }
 }

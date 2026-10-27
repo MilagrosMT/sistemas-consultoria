@@ -34,7 +34,7 @@ return new class extends Migration
             $table->enum('estado', [
                 'Pendiente',
                 'Pagada',
-                'Anulada'
+                'Anulada',
             ])->default('Pendiente');
 
             $table->text('observacion')->nullable();

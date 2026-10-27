@@ -13,10 +13,10 @@ return new class extends Migration
                 'Pendiente',
                 'Pagada',
                 'Emitida',
-                'Anulada'
+                'Anulada',
             ])
-            ->default('Emitida')
-            ->change();
+                ->default('Emitida')
+                ->change();
         });
     }
 
@@ -26,10 +26,10 @@ return new class extends Migration
             $table->enum('estado', [
                 'Pendiente',
                 'Pagada',
-                'Anulada'
+                'Anulada',
             ])
-            ->default('Pendiente')
-            ->change();
+                ->default('Pendiente')
+                ->change();
         });
     }
 };
