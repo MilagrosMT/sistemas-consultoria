@@ -1,7 +1,6 @@
 
 <?php
 
-use App\Http\Middleware\RoleMiddleware;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -69,8 +68,6 @@ test('usuario sin rol no puede acceder a gestion de solicitudes', function () {
         ->assertForbidden();
 });
 
-
-
 test('usuario inactivo no puede acceder a gestion de solicitudes', function () {
     $usuario = crearUsuarioConRol('Administrador');
 
@@ -82,8 +79,8 @@ test('usuario inactivo no puede acceder a gestion de solicitudes', function () {
     expect($usuario->activo)->toBeFalse();
 
     $this->actingAs($usuario)
-    ->get(route('gestion-solicitudes'))
-    ->assertRedirect(route('login'));
+        ->get(route('gestion-solicitudes'))
+        ->assertRedirect(route('login'));
 
-$this->assertGuest();
+    $this->assertGuest();
 });

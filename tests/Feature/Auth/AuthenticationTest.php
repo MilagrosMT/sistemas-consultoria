@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
@@ -78,44 +79,44 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
-public function test_inactive_users_cannot_authenticate(): void
-{
-    $rol = \App\Models\Role::create([
-        'nombre' => 'Administrador',
-        'descripcion' => 'Rol para prueba',
-        'activo' => true,
-    ]);
 
-    $user = User::factory()->create([
-        'role_id' => $rol->id,
-        'activo' => false,
-    ]);
+    public function test_inactive_users_cannot_authenticate(): void
+    {
+        $rol = Role::create([
+            'nombre' => 'Administrador',
+            'descripcion' => 'Rol para prueba',
+            'activo' => true,
+        ]);
 
-    $response = $this->post(route('login.store'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+        $user = User::factory()->create([
+            'role_id' => $rol->id,
+            'activo' => false,
+        ]);
 
-    $this->assertGuest();
-}
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
 
-public function test_inactive_users_with_two_factor_enabled_cannot_authenticate(): void
-{
-    $user = User::factory()
-        ->withTwoFactor()
-        ->create();
+        $this->assertGuest();
+    }
 
-    $user->activo = false;
-    $user->save();
+    public function test_inactive_users_with_two_factor_enabled_cannot_authenticate(): void
+    {
+        $user = User::factory()
+            ->withTwoFactor()
+            ->create();
 
-    $response = $this->post(route('login.store'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+        $user->activo = false;
+        $user->save();
 
-    $this->assertGuest();
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
 
-    $response->assertSessionHasErrors('email');
-}
+        $this->assertGuest();
 
+        $response->assertSessionHasErrors('email');
+    }
 }
