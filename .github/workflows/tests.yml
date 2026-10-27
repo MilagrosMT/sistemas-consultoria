@@ -37,6 +37,14 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
+      - name: Prepare Laravel directories
+        run: |
+          mkdir -p bootstrap/cache
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/testing
+          mkdir -p storage/framework/views
+          mkdir -p storage/logs
       - name: Setup Application
         run: composer setup
 
